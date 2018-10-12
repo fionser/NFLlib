@@ -15,21 +15,13 @@
 
 namespace nfl {
 
-#define DECLARE_UNARY_OPERATOR(SYM, NAME)\
-template<class T, size_t Degree, size_t NbModuli>\
-auto SYM(nfl::poly<T, Degree, NbModuli> const& op) -> decltype(ops::make_op<ops::NAME<T, CC_SIMD>>(op)) {\
-  return ops::make_op<ops::NAME<T, CC_SIMD>>(op);\
-}\
+#define DECLARE_UNARY_EXPR(SYM, NAME)\
 template<class Op, class...Args>\
 auto SYM(nfl::ops::expr<Op, Args...> const& op) -> decltype(ops::make_op<ops::NAME<typename nfl::ops::expr<Op, Args...>::value_type, typename nfl::ops::expr<Op, Args...>::simd_mode>>(op)) {\
   return ops::make_op<ops::NAME<typename nfl::ops::expr<Op, Args...>::value_type, typename nfl::ops::expr<Op, Args...>::simd_mode>>(op);\
 }
 
-#define DECLARE_BINARY_OPERATOR(SYM, NAME)\
-template<class T, size_t Degree, size_t NbModuli>\
-auto SYM(nfl::poly<T, Degree, NbModuli> const& op0, nfl::poly<T, Degree, NbModuli> const& op1) -> decltype(ops::make_op<ops::NAME<T, CC_SIMD>>(op0, op1)) {\
-  return ops::make_op<ops::NAME<T, CC_SIMD>>(op0, op1);\
-}\
+#define DECLARE_BINARY_EXPR(SYM, NAME)\
 template<class T, size_t Degree, size_t NbModuli, class Op, class...Args>\
 auto SYM(nfl::poly<T, Degree, NbModuli> const& op0, nfl::ops::expr<Op, Args...> const& op1) -> decltype(ops::make_op<ops::NAME<typename nfl::ops::expr<Op, Args...>::value_type, typename nfl::ops::expr<Op, Args...>::simd_mode>>(op0, op1)) {\
   return ops::make_op<ops::NAME<typename nfl::ops::expr<Op, Args...>::value_type, typename nfl::ops::expr<Op, Args...>::simd_mode>>(op0, op1);\
