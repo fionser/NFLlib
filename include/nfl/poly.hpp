@@ -166,6 +166,13 @@ public:
    */
   void ntt_pow_phi() { base.ntt_pow_phi(*this);}
   void invntt_pow_invphi() { base.invntt_pow_invphi(*this); }
+  /* more flexiable API for applying ntt and invntt on 
+     the k-th moduli and use the cm-th prime
+   */
+  void ntt_pow_phi(size_t k) { ntt_pow_phi(k, k); }
+  void invntt_pow_invphi(size_t k) { invntt_pow_invphi(k, k); }
+  void ntt_pow_phi(size_t k, size_t cm) { base.ntt_pow_phi(*this, k, cm); }
+  void invntt_pow_invphi(size_t k, size_t cm) { base.invntt_pow_invphi(k, cm); }
 
   // Serialization API
   //
@@ -212,6 +219,10 @@ public:
 
     void ntt_pow_phi(poly &op);
     void invntt_pow_invphi(poly&);
+    void ntt_pow_phi(poly &op, size_t k) { ntt_pow_phi(op, k, k); }
+    void ntt_pow_phi(poly &op, size_t k, size_t cm);
+    void invntt_pow_phi(poly &op, size_t k) { invntt_pow_phi(op, k, k); }
+    void invntt_pow_phi(poly &op, size_t k, size_t cm);
     static bool ntt(value_type* x, const value_type* wtab, const value_type* winvtab, value_type  const p);
     static bool inv_ntt(value_type *x, const value_type* const inv_wtab, const value_type* const inv_winvtab, value_type invK, value_type const p);
 

@@ -600,18 +600,49 @@ template<class T, size_t Degree, size_t NbModuli> inline void poly<T, Degree, Nb
   }
 }
 
+template<class T, size_t Degree, size_t NbModuli> 
+inline void poly<T, Degree, NbModuli>::core::ntt_pow_phi(
+  poly& op, size_t k, size_t cm)
+{
+  assert(k < NbModuli && cm < NbModuli);
+  nfl::ops::mulmod_shoup<T, nfl::simd::serial> muler;
+  T *dst0 = &op(k, 0);
+  T *dst = dst0;
+  const T* phi = phis[cm];
+  const T* phi_shoup = shoupphis[cm];
+  const T modulus = get_modulus(cm);
+  for (size_t i = 0; i < Degree; ++i, ++dst)
+    *dst = muler(*dst, *phi++, *phi_shoup++, modulus);
+
+  poly::core::ntt(dst0, omegas[cm], shoupomegas[cm], modulus);
+}
 
 // Inverse NTT: replaces NTT values representation by the classic
 // coefficient representation and multiplies the coefficients with the
 // inverse powers of phi
 // In order to have polynomial operations mod X**n + 1 as we want
-// we must multiply the polynomial coefficients by invphi powers before doing the inverse-NTT
+// we must multiply the polynomial coefficients by invphi powers after doing the inverse-NTT
 template<class T, size_t Degree, size_t NbModuli> inline void poly<T, Degree, NbModuli>::core::invntt_pow_invphi(poly &op)
 {
   for(size_t currentModulus = 0; currentModulus < nmoduli; ++currentModulus) {
     poly::core::inv_ntt(&op(currentModulus, 0), invomegas[currentModulus], shoupinvomegas[currentModulus], invpolyDegree[currentModulus], get_modulus(currentModulus));
   }
   op = nfl::shoup(op * reinterpret_cast<poly const &>(invpoly_times_invphis), reinterpret_cast<poly const &>(shoupinvpoly_times_invphis));
+}
+
+template<class T, size_t Degree, size_t NbModuli> 
+inline void poly<T, Degree, NbModuli>::core::invntt_pow_phi(
+  poly& op, size_t k, size_t cm)
+{
+  assert(k < NbModuli && cm < NbModuli);
+  nfl::ops::mulmod_shoup<T, nfl::simd::serial> muler;
+  T *dst = &op(k, 0);
+  poly::core::inv_ntt(dst, invomegas[cm], shoupinvomegas[cm], invpolyDegree[cm], get_modulus(cm));
+  const T* phis = invpoly_times_invphis[cm];
+  const T* phis_shoup = shoupinvpoly_times_invphis[cm];
+  const T modulus = get_modulus(cm);
+  for (size_t i = 0; i < Degree; ++i, ++dst)
+    *dst = muler(*dst, *phis++, *phis_shoup++, modulus);
 }
 
 // *********************************************************

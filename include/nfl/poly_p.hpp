@@ -140,6 +140,10 @@ public:
    */
   void ntt_pow_phi() { poly_obj().ntt_pow_phi();}
   void invntt_pow_invphi() { poly_obj().invntt_pow_invphi(); }
+  void ntt_pow_phi(size_t k) { poly_obj().ntt_pow_phi(k, k); }
+  void invntt_pow_invphi(size_t k) { poly_obj().invntt_pow_invphi(k, k); }
+  void ntt_pow_phi(size_t k, size_t cm) { poly_obj().ntt_pow_phi(k, cm); }
+  void invntt_pow_invphi(size_t k, size_t cm) { poly_obj().invntt_pow_invphi(k, cm); }
 
   /* manual serializers
   */
