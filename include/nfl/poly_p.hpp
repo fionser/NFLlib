@@ -135,16 +135,7 @@ public:
   template<class M> auto load(size_t cm, size_t i) const -> decltype(M::load(&(this->operator()(cm, i)))) { return M::load(&(*this)(cm, i)); }
 
   static constexpr value_type get_modulus(size_t n) { return poly_type::get_modulus(n); }
-
-  /* ntt stuff - public API
-   */
-  void ntt_pow_phi() { poly_obj().ntt_pow_phi();}
-  void invntt_pow_invphi() { poly_obj().invntt_pow_invphi(); }
-  void ntt_pow_phi(size_t k) { poly_obj().ntt_pow_phi(k, k); }
-  void invntt_pow_invphi(size_t k) { poly_obj().invntt_pow_invphi(k, k); }
-  void ntt_pow_phi(size_t k, size_t cm) { poly_obj().ntt_pow_phi(k, cm); }
-  void invntt_pow_invphi(size_t k, size_t cm) { poly_obj().invntt_pow_invphi(k, cm); }
-
+  
   /* manual serializers
   */
   void serialize_manually(std::ostream& outputstream) {

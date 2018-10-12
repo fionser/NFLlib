@@ -150,7 +150,6 @@ public:
   const_iterator cbegin() const { return std::begin(_data); }
   const_iterator cend() const { return std::end(_data); }
 
-
   /* polynomial indexing
    */
   value_type const& operator()(size_t cm, size_t i) const { return _data[cm * degree + i]; }
@@ -246,29 +245,6 @@ public:
   inline static constexpr std::array<mpz_t, nmoduli> lifting_integers() { return gmp.lifting_integers; };
 
 }  __attribute__((aligned(32)));
-
-
-/* High level operations on polynomials. They are just wrappers over the operator overloads
- */
-template<class T, size_t Degree, size_t NbModuli>
-void sub(poly<T, Degree, NbModuli> & out,
-         poly<T, Degree, NbModuli> const &arg0, poly<T, Degree, NbModuli> const & arg1) {
-  out = arg0 - arg1;
-}
-
-/**
- * Perform the modular addition of polynomial @p arg0 with polynomial @p arg1 and store the result in polynomial @p out.
- */
-template<class T, size_t Degree, size_t NbModuli>
-void add(poly<T, Degree, NbModuli> & out,
-         poly<T, Degree, NbModuli> const &arg0, poly<T, Degree, NbModuli> const & arg1) {
-  out = arg0 + arg1;
-}
-template<class T, size_t Degree, size_t NbModuli>
-void mul(poly<T, Degree, NbModuli> & out,
-         poly<T, Degree, NbModuli> const &arg0, poly<T, Degree, NbModuli> const & arg1) {
-  out = arg0 * arg1;
-}
 
 /* misc type adaptor
  */
