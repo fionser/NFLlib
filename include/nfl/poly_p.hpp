@@ -160,6 +160,8 @@ public:
   void set(value_type v, bool reduce_coeffs = true) { poly_obj().set(v, reduce_coeffs); };
   void set(uniform const& mode) { poly_obj().set(mode); };
   void set(non_uniform const& mode) { poly_obj().set(mode); };
+  void set(hwt_dist const& mode) { poly_obj().set(mode); };
+  void set(ZO_dist const& mode) { poly_obj().set(mode); };
   template <class in_class, unsigned _lu_depth> void set(gaussian<in_class, T, _lu_depth> const& mode) { poly_obj().set(mode); };
   void set(std::initializer_list<value_type> values, bool reduce_coeffs = true) { poly_obj().set(values, reduce_coeffs); };
   void set(std::array<value_type, Degree> values, bool reduce_coeffs = true) { poly_obj().set(values, reduce_coeffs); };
@@ -190,8 +192,8 @@ public:
   void set_mpz(std::initializer_list<mpz_class> const& values) { poly_obj().set_mpz(values); };
   template<class It> void set_mpz(It first, It last) { poly_obj().set_mpz(first, last); };
 
-  inline std::array<mpz_t, Degree> poly2mpz() { return poly_obj().poly2mpz(); };
-  inline void poly2mpz(std::array<mpz_t, Degree> & array) { poly_obj().poly2mpz(array); };
+  inline std::array<mpz_t, Degree> poly2mpz() const { return poly_obj().poly2mpz(); };
+  inline void poly2mpz(std::array<mpz_t, Degree> & array) const { poly_obj().poly2mpz(array); };
   inline void mpz2poly(std::array<mpz_t, Degree> const& array) { poly_obj().mpz2poly(array); };
 
   inline static constexpr size_t bits_in_moduli_product() { return poly_type::bits_in_moduli_product(); };
