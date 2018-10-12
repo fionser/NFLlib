@@ -172,7 +172,7 @@ public:
   void ntt_pow_phi(size_t k) { ntt_pow_phi(k, k); }
   void invntt_pow_invphi(size_t k) { invntt_pow_invphi(k, k); }
   void ntt_pow_phi(size_t k, size_t cm) { base.ntt_pow_phi(*this, k, cm); }
-  void invntt_pow_invphi(size_t k, size_t cm) { base.invntt_pow_invphi(k, cm); }
+  void invntt_pow_invphi(size_t k, size_t cm) { base.invntt_pow_invphi(*this, k, cm); }
 
   // Serialization API
   //
