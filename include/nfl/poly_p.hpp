@@ -222,20 +222,6 @@ std::ostream& operator<<(std::ostream& os, nfl::poly_p<T, Degree, NbModuli> cons
   return os << p.poly_obj();
 }
 
-/* unary operators
-*/
-template<class E, class T, size_t Degree, size_t NbModuli>
-auto shoup(E const& e, poly_p<T, Degree, NbModuli> const& m) -> decltype(shoup(e, m.poly_obj()))
-{
-  return shoup(e, m.poly_obj());
-}
-
-template<class T, size_t Degree, size_t NbModuli>
-auto compute_shoup(poly_p<T, Degree, NbModuli> const& p) -> decltype(compute_shoup(p.poly_obj()))
-{
-  return compute_shoup(p.poly_obj());
-}
-
 /* operator overloads - includes expression templates
  */
 #define DECLARE_BINARY_OPERATOR_P(SYM, NAME)\
@@ -251,10 +237,6 @@ template<class T, size_t Degree, size_t NbModuli, class Op, class...Args>\
 auto SYM(nfl::ops::expr<Op, Args...> const& op0, nfl::poly_p<T, Degree, NbModuli> const& op1) -> decltype(ops::make_op<ops::NAME<typename nfl::ops::expr<Op, Args...>::value_type, typename nfl::ops::expr<Op, Args...>::simd_mode>>(op0, op1)){\
   return ops::make_op<ops::NAME<typename nfl::ops::expr<Op, Args...>::value_type, typename nfl::ops::expr<Op, Args...>::simd_mode>>(op0, op1);\
 }
-
-DECLARE_BINARY_OPERATOR_P(operator-, submod)
-DECLARE_BINARY_OPERATOR_P(operator+, addmod)
-DECLARE_BINARY_OPERATOR_P(operator*, mulmod)
 
 } // nfl
 

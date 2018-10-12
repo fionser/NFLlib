@@ -162,18 +162,6 @@ public:
   pointer_type data() { return _data; }
   static constexpr value_type get_modulus(size_t n) { return params<T>::P[n]; }
 
-  /* ntt stuff - public API
-   */
-  void ntt_pow_phi() { base.ntt_pow_phi(*this);}
-  void invntt_pow_invphi() { base.invntt_pow_invphi(*this); }
-  /* more flexiable API for applying ntt and invntt on 
-     the k-th moduli and use the cm-th prime
-   */
-  void ntt_pow_phi(size_t k) { ntt_pow_phi(k, k); }
-  void invntt_pow_invphi(size_t k) { invntt_pow_invphi(k, k); }
-  void ntt_pow_phi(size_t k, size_t cm) { base.ntt_pow_phi(*this, k, cm); }
-  void invntt_pow_invphi(size_t k, size_t cm) { base.invntt_pow_invphi(*this, k, cm); }
-
   // Serialization API
   //
   // Serialization of polynomials is not portable in terms of "cross
@@ -196,66 +184,6 @@ public:
   template<class Archive> void serialize(Archive & archive) { 
     archive( _data ); // serialize coefficients by passing them to the archive
   }
-
-  protected:
-  // NTT-based Fast Lattice library main class
-  // - degree is the degree of the quotient polynomial in the ring, it must
-  // be lower or equal than params<T>::kMaxPolyDegree
-  // - aggregatedModulusBitsize is the size of the composite modulus to be used,
-  // it must be a multiple of params<T>::kModulusBitsize
-  // - T is the limb for the submoduli, it must be uint16_t, uint32_t or uint64_t
-  class core {
-
-	  template <class P> friend class tests::poly_tests_proxy;
-
-  public:
-
-    /* Constructor
-     */
-    core();
-
-    /* Number-Theoretic Functions
-     */
-
-    void ntt_pow_phi(poly &op);
-    void invntt_pow_invphi(poly&);
-    void ntt_pow_phi(poly &op, size_t k) { ntt_pow_phi(op, k, k); }
-    void ntt_pow_phi(poly &op, size_t k, size_t cm);
-    void invntt_pow_invphi(poly &op, size_t k) { invntt_pow_invphi(op, k, k); }
-    void invntt_pow_invphi(poly &op, size_t k, size_t cm);
-    static bool ntt(value_type* x, const value_type* wtab, const value_type* winvtab, value_type  const p);
-    static bool inv_ntt(value_type *x, const value_type* const inv_wtab, const value_type* const inv_winvtab, value_type invK, value_type const p);
-
-  private:
-    // NTT and inversse NTT related attributes
-    // omega**i values (omega = polydegree-th primitive root of unity),
-    // and their inverses
-    // phi**i values (phi = square root of omega), and their inverses
-    // multiplied by a constant
-    // Shoup variables contain redundant data to speed up the process
-    // NOTE : omega and derived values are ordered following David Harvey's
-    // algorithm w**0 w**1 ... w**(degree/2) w**0 w**2 ...
-    // w**(degree/2) w**0 w**4 ... w**(degree/2) etc. (degree values)
-    value_type
-      phis[nmoduli][degree] __attribute__((aligned(32))),
-      shoupphis[nmoduli][degree]  __attribute__((aligned(32))),
-      invpoly_times_invphis[nmoduli][degree]  __attribute__((aligned(32))),
-      shoupinvpoly_times_invphis[nmoduli][degree]  __attribute__((aligned(32))),
-      omegas[nmoduli][degree * 2]  __attribute__((aligned(32))),
-      *shoupomegas[nmoduli]  __attribute__((aligned(32))),
-      invomegas[nmoduli][2 * degree]  __attribute__((aligned(32))),
-      *shoupinvomegas[nmoduli]  __attribute__((aligned(32))),
-      invpolyDegree[nmoduli]  __attribute__((aligned(32)));
-
-    /* Initializing function
-     */
-
-    void initialize();
-    static void prep_wtab(value_type* wtab, value_type* winvtab, value_type w, size_t cm);
-
-  } __attribute__((aligned(32)));
-
-  static core base;
 
   protected:
   // NTT-based Fast Lattice library GMP class
@@ -351,17 +279,6 @@ using poly_from_modulus = poly<T, Degree, AggregatedModulusBitSize / params<T>::
  */
 template<class T, size_t Degree, size_t NbModuli>
 std::ostream& operator<<(std::ostream& os, nfl::poly<T, Degree, NbModuli> const& p);
-
-/* operator overloads - includes expression templates
- */
-DECLARE_BINARY_OPERATOR(operator-, submod)
-DECLARE_BINARY_OPERATOR(operator+, addmod)
-DECLARE_BINARY_OPERATOR(operator==, eqmod)
-DECLARE_BINARY_OPERATOR(operator!=, neqmod)
-DECLARE_BINARY_OPERATOR(operator*, mulmod)
-DECLARE_BINARY_OPERATOR(shoup, shoup)
-DECLARE_UNARY_OPERATOR(compute_shoup, compute_shoup)
-
 }
 
 #include "nfl/core.hpp"
