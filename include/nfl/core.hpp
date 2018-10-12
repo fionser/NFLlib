@@ -610,11 +610,10 @@ inline void poly<T, Degree, NbModuli>::core::ntt_pow_phi(
   T *dst = dst0;
   const T* phi = phis[cm];
   const T* phi_shoup = shoupphis[cm];
-  const T modulus = get_modulus(cm);
   for (size_t i = 0; i < Degree; ++i, ++dst)
-    *dst = muler(*dst, *phi++, *phi_shoup++, modulus);
+    *dst = muler(*dst, *phi++, *phi_shoup++, cm);
 
-  poly::core::ntt(dst0, omegas[cm], shoupomegas[cm], modulus);
+  poly::core::ntt(dst0, omegas[cm], shoupomegas[cm], get_modulus(cm));
 }
 
 // Inverse NTT: replaces NTT values representation by the classic
@@ -635,14 +634,13 @@ inline void poly<T, Degree, NbModuli>::core::invntt_pow_phi(
   poly& op, size_t k, size_t cm)
 {
   assert(k < NbModuli && cm < NbModuli);
-  nfl::ops::mulmod_shoup<T, nfl::simd::serial> muler;
   T *dst = &op(k, 0);
   poly::core::inv_ntt(dst, invomegas[cm], shoupinvomegas[cm], invpolyDegree[cm], get_modulus(cm));
-  const T* phis = invpoly_times_invphis[cm];
-  const T* phis_shoup = shoupinvpoly_times_invphis[cm];
-  const T modulus = get_modulus(cm);
+  const T* invphis = invpoly_times_invphis[cm];
+  const T* invphis_shoup = shoupinvpoly_times_invphis[cm];
+  nfl::ops::mulmod_shoup<T, nfl::simd::serial> muler;
   for (size_t i = 0; i < Degree; ++i, ++dst)
-    *dst = muler(*dst, *phis++, *phis_shoup++, modulus);
+    *dst = muler(*dst, *invphis++, *invphis_shoup++, cm);
 }
 
 // *********************************************************
