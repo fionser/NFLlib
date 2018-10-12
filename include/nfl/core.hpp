@@ -630,7 +630,7 @@ template<class T, size_t Degree, size_t NbModuli> inline void poly<T, Degree, Nb
 }
 
 template<class T, size_t Degree, size_t NbModuli> 
-inline void poly<T, Degree, NbModuli>::core::invntt_pow_phi(
+inline void poly<T, Degree, NbModuli>::core::invntt_pow_invphi(
   poly& op, size_t k, size_t cm)
 {
   assert(k < NbModuli && cm < NbModuli);
