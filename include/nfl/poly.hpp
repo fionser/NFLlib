@@ -183,67 +183,6 @@ public:
   template<class Archive> void serialize(Archive & archive) { 
     archive( _data ); // serialize coefficients by passing them to the archive
   }
-
-  protected:
-  // NTT-based Fast Lattice library GMP class
-  class GMP {
-
-  public:
-
-    mpz_t   moduli_product;
-    mpz_t   modulus_shoup;
-    size_t bits_in_moduli_product;
-    size_t bits_in_modulus_shoup;
-    size_t shift_modulus_shoup;
-    std::array<mpz_t, nmoduli> lifting_integers;
-
-    /* Constructor & Destructor
-     */
-    GMP();
-    ~GMP();
-
-    /* GMP Functions
-     */
-
-    std::array<mpz_t, Degree>  poly2mpz(poly const&);
-    void    poly2mpz(std::array<mpz_t, Degree>&, poly const&);
-    void    mpz2poly(poly&, std::array<mpz_t, Degree> const&);
-  };
-
-  static GMP gmp;
-
-public:
-  poly(mpz_t const& v);
-  poly(mpz_class const& v);
-  poly(std::array<mpz_t, Degree> const& values);
-  poly(std::array<mpz_class, Degree> const& values);
-  poly(std::initializer_list<mpz_t> const& values);
-  poly(std::initializer_list<mpz_class> const& values);
-  
-  void set_mpz(mpz_t const& v);
-  void set_mpz(mpz_class const& v);
-  void set_mpz(std::array<mpz_t, Degree> const& values);
-  void set_mpz(std::array<mpz_class, Degree> const& values);
-  void set_mpz(std::initializer_list<mpz_t> const& values);
-  void set_mpz(std::initializer_list<mpz_class> const& values);
-  template<class It> void set_mpz(It first, It last);
-  
-  poly& operator=(mpz_t const& v) { set_mpz(v); return *this; }
-  poly& operator=(mpz_class const& v) { set_mpz(v); return *this; }
-  poly& operator=(std::array<mpz_t, Degree> const& values) { set_mpz(values); return *this; }
-  poly& operator=(std::array<mpz_class, Degree> const& values) { set_mpz(values); return *this; }
-  poly& operator=(std::initializer_list<mpz_t> const& values) { set_mpz(values); return *this; }
-  poly& operator=(std::initializer_list<mpz_class> const& values) { set_mpz(values); return *this; }
-
-  inline std::array<mpz_t, Degree> poly2mpz() const { return gmp.poly2mpz(*this); };
-  inline void poly2mpz(std::array<mpz_t, Degree> & array) const { gmp.poly2mpz(array, *this); };
-  inline void mpz2poly(std::array<mpz_t, Degree> const& array) { gmp.mpz2poly(*this, array); };
-  
-  inline static constexpr size_t bits_in_moduli_product() { return gmp.bits_in_moduli_product; };
-  inline static constexpr mpz_t& moduli_product() { return gmp.moduli_product; };
-  inline static constexpr mpz_t& modulus_shoup() { return gmp.modulus_shoup; };
-  inline static constexpr std::array<mpz_t, nmoduli> lifting_integers() { return gmp.lifting_integers; };
-
 }  __attribute__((aligned(32)));
 
 /* misc type adaptor
@@ -258,6 +197,5 @@ std::ostream& operator<<(std::ostream& os, nfl::poly<T, Degree, NbModuli> const&
 }
 
 #include "nfl/core.hpp"
-#include "nfl/gmp.hpp"
 
 #endif
